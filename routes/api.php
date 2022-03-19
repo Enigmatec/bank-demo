@@ -3,6 +3,7 @@
 use App\Models\User;
 use App\Models\UserAccount;
 use Illuminate\Http\Request;
+use App\Http\Middleware\CheckRole;
 use App\Models\TransactionHistory;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Route;
@@ -23,26 +24,18 @@ use App\Http\Resources\TransactionHistoryResource;
 |
 */
 
-Route::post('auth/sign-in', LoginController::class);
-
-// Route::get('hist', function () {
-//     $user = User::find(2);
-//     // $user_account = $user->userAccounts()->where('account_type_id', 1)->first();
-//     // return $user_account->transactionHistories()->get();
-//     return TransactionHistoryResource::collection($user->histories()->where('account_type_id', 2)->get());
-// });
-
+Route::post('auth/sign-in', LoginController::class)->name('auth.login');
 
 Route::middleware(['auth:sanctum'])->group(function(){
     //Admin
-    Route::group(['prefix' => 'admin', 'middleware' => ['admin'], 'as' => 'admin.'], function(){
-        Route::post('users', RegisterController::class);
+    Route::group(['prefix' => 'admin', 'middleware' => ['role:admin'], 'as' => 'admin.'], function(){
+        Route::post('users', RegisterController::class)->name('create.client');
         Route::post('account-types', [App\Http\Controllers\Admin\AccountTypeController::class, 'createAccountType']);
         Route::post('users/add-account-type/{user}', [App\Http\Controllers\Admin\ClientController::class, 'addNewAccountType']);
     });
     
     // Client
-    Route::group(['prefix' => 'user', 'as' => 'users.'], function(){
+    Route::group(['prefix' => 'user', 'middleware' => ['role:client'], 'as' => 'users.'], function(){
         Route::get('/balance', [App\Http\Controllers\Client\ClientController::class, 'retrieveActBalance']);
         Route::post('/transfer', [App\Http\Controllers\Client\ClientController::class, 'transferMoney']);
         Route::get('/histories', [App\Http\Controllers\Client\ClientController::class, 'checkTransactionHistories']);
