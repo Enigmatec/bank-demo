@@ -30,15 +30,15 @@ Route::middleware(['auth:sanctum'])->group(function(){
     //Admin
     Route::group(['prefix' => 'admin', 'middleware' => ['role:admin'], 'as' => 'admin.'], function(){
         Route::post('users', RegisterController::class)->name('create.client');
-        Route::post('account-types', [App\Http\Controllers\Admin\AccountTypeController::class, 'createAccountType']);
-        Route::post('users/add-account-type/{user}', [App\Http\Controllers\Admin\ClientController::class, 'addNewAccountType']);
+        Route::post('account-types', [App\Http\Controllers\Admin\AccountTypeController::class, 'createAccountType'])->name('create.accountType');
+        Route::post('users/add-account-type/{user}', [App\Http\Controllers\Admin\ClientController::class, 'addNewAccountTypeForUser'])->name('addActTypeForUser');
     });
     
     // Client
     Route::group(['prefix' => 'user', 'middleware' => ['role:client'], 'as' => 'users.'], function(){
-        Route::get('/balance', [App\Http\Controllers\Client\ClientController::class, 'retrieveActBalance']);
-        Route::post('/transfer', [App\Http\Controllers\Client\ClientController::class, 'transferMoney']);
-        Route::get('/histories', [App\Http\Controllers\Client\ClientController::class, 'checkTransactionHistories']);
+        Route::get('/balance', [App\Http\Controllers\Client\ClientController::class, 'retrieveActBalance'])->name('retrieve.balance');
+        Route::post('/transfer', [App\Http\Controllers\Client\ClientController::class, 'transferMoney'])->name('transfer.money');
+        Route::get('/histories', [App\Http\Controllers\Client\ClientController::class, 'checkTransactionHistories'])->name('transaction.histories');
 
     });
 });

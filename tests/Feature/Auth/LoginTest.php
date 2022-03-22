@@ -25,6 +25,16 @@ class LoginTest extends TestCase
             'password' => 'password'
         ])
         ->assertStatus(200);
+    }
 
+    public function test_user_cannot_login_with_wrong_credentials()
+    {
+        $this->withoutExceptionHandling();
+        $user =  User::factory()->create();
+        $this->json('POST', route('auth.login'), [
+            'email' => 'client@client.com',
+            'password' => 'password'
+        ])
+        ->assertStatus(401);
     }
 }

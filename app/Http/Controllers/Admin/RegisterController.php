@@ -28,7 +28,7 @@ class RegisterController extends Controller
     {
         $user_account = $request->validate([
             'amount' => ['required', 'numeric'],
-            'account_type' => ['required', 'exists:account_types,name'],
+            'account_type' => ['required'],
         ]);
         $account_type_id = AccountType::getAccountTypeID($user_account['account_type']);
 
