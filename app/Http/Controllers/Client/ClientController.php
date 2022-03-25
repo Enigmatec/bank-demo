@@ -25,7 +25,7 @@ class ClientController extends Controller
 
         $users_balance = $user->userAccounts()->select(['balance'])->where('account_type_id', $account_type_id)->first();
         if(! $users_balance)
-            return response()->json(["success" => false, "message" => "User did not have such account type"]);
+            return response()->json(["success" => false, "message" => "User did not have such account type"], 400);
         
         return response()->json([
             "success" => true,
@@ -41,47 +41,47 @@ class ClientController extends Controller
         if(is_null($transfer_money->userBalance($form_data))){
             return response()->json([
                 "message" => "User Account Balance Too Low Or you dont have the selected account type"
-            ]);
+            ], 400);
         }
 
-        //process the transfer
+        //process the transfer and check if client is sending to the same account number
         $data = $transfer_money->transferMoney($form_data);
         if($data === "same account") {
             return response()->json([
                 "success" => false,
-                "message" => "You can't send to the same account number",
-            ]);
+                "message" => "You can't transfer to the same account number",
+            ], 400);
         }
         
         return response()->json([
             "success" => true,
             "message" => "Transfer Successful",
-            "transfered" => $transfered_amount
+            "transfered" => $data
         ]);
     }
 
     public function checkTransactionHistories(Request $request)
     {
         $user = auth()->user();
-        if($request->has('account_type')) {
-            $account_type = $request->validate([
-                'account_type' => ['required', 'exists:account_types,name']
-            ]);
-
-            $account_type_id = AccountType::getAccountTypeID($account_type);
-            $user_account = $user->userAccounts()->where('account_type_id', $account_type_id)->first();
-            if(! $user_account) {
-                return response()->json([
-                    "success" => false,
-                    "message" =>"User does not have selected account type"
-                ]);
-            }
-            $transaction_histories = $user_account->transactionHistories()->get();
+       
+        $account_type = $request->validate([
+            'account_type' => ['required', 'exists:account_types,name']
+        ]);
+        
+        $account_type_id = AccountType::getAccountTypeID($account_type);
+        $user_account = $user->userAccounts()->where('account_type_id', $account_type_id)->first();
+        if(! $user_account) {
             return response()->json([
-                "success" => true,
-                "histories" => TransactionHistoryResource::collection($transaction_histories)
+                "success" => false,
+                "message" =>"User does not have selected account type"
             ]);
         }
+        $transaction_histories = $user_account->transactionHistories()->get();
+        return response()->json([
+            "success" => true,
+            "histories" => TransactionHistoryResource::collection($transaction_histories)
+        ]);
+        
         
     }
 }

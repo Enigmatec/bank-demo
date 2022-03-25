@@ -8,16 +8,17 @@ class GenerateAccountNo
 {
     protected $user_account;
 
-    public function __construct(UserAccount $user_account)
-    {
-        $this->user_account = $user_account;    
-    }
-    public function generateAccountNo()
+    public function generateRandomNoOfTenLength()
     {
         $account_no =  mt_rand(1000000000,9999999999);
-        if($this->user_account->where('account_no', $account_no)->exists()){
-            $this->generateAccountNo();
-        }
         return $account_no;
     }   
+
+    public function generateAccountNo()
+    {
+        if(UserAccount::where('account_no', $this->generateRandomNoOfTenLength())->exists()) 
+            return $this->generateRandomNoOfTenLength();
+        return $this->generateRandomNoOfTenLength();
+    }
+
 }

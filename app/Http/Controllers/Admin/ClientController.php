@@ -16,7 +16,7 @@ class ClientController extends Controller
         $this->generate_act_no = $generate_act_no;
     }
     
-    public function addNewAccountType(Request $request, User $user)
+    public function addNewAccountTypeForUser(Request $request, User $user)
     {   
         $user_account = $request->validate([
             'amount' => ['required', 'numeric'],
@@ -33,6 +33,6 @@ class ClientController extends Controller
             'balance' => $user_account['amount']
         ]);
 
-        return response()->json(["success" => true, "message" => "New Account Type Added"]);
+        return response()->json(["success" => true, "message" => "New Account Type Added"], 201);
     }
 }
