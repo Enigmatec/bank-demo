@@ -28,10 +28,15 @@ composer install
 
 Then create a environment file using this command-
 ```
-cp .env.example .env
+cp .env.example .env or create a file and name it .env and copy the content the of .env.exmaple into it
 ```
 
 Then edit `.env` file with appropriate credential for your database server. Just edit these two parameter(`DB_USERNAME`, `DB_PASSWORD`).
+
+Then generate a key using this command
+```
+php artisan key:generate
+```
 
 Then create a database named `bank-demo` and then do a database migration using this command-
 ```
