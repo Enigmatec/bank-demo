@@ -13,15 +13,24 @@ class ClientTransferMoneyTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_check_if_client_has_enough_to_transfer()
-    {
+    private function actingAsClient() {
         $client = User::factory()->create([
             'role' => 'client',
-            'email' => 'client23@gmail.com'
+            'email' => 'client@gmail.com'
         ]);
         $this->actingAs($client);
 
-        $account_type = AccountType::factory()->create();
+        return $client;
+    }
+
+    public function test_check_if_client_has_enough_to_transfer()
+    {
+        
+        $client = $this->actingAsClient();
+
+        $account_type = AccountType::factory()->create([
+            'name' => 'type6'
+        ]);
         $client->userAccounts()->create([
             'balance' => 2000,
             'account_type_id' => $account_type->id,
@@ -40,13 +49,11 @@ class ClientTransferMoneyTest extends TestCase
 
     public function test_check_if_client_does_not_have_enough_to_transfer()
     {
-        $client = User::factory()->create([
-            'role' => 'client',
-            'email' => 'client23@gmail.com'
-        ]);
-        $this->actingAs($client);
+        $client = $this->actingAsClient();
 
-        $account_type = AccountType::factory()->create();
+        $account_type = AccountType::factory()->create([
+            'name' => 'type5'
+        ]);
         $client->userAccounts()->create([
             'balance' => 2000,
             'account_type_id' => $account_type->id,
@@ -63,8 +70,4 @@ class ClientTransferMoneyTest extends TestCase
         $this->assertNull($check_balance);
     }
 
-    public function test_if_client_is_sending_money_to_the_same_account()
-    {
-        
-    }
 }

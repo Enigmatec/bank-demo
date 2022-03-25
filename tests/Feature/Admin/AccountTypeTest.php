@@ -13,7 +13,7 @@ class AccountTypeTest extends TestCase
 
     public function test_only_admin_can_create_new_account_type()
     {
-        $this->withoutExceptionHandling();
+        // $this->withoutExceptionHandling();
         $admin = User::factory()->create([
             'role' => 'admin'
         ]);
@@ -27,7 +27,7 @@ class AccountTypeTest extends TestCase
 
     public function test_non_admin_cannot_create_new_account_type()
     {
-        $this->withoutExceptionHandling();
+        // $this->withoutExceptionHandling();
         $admin = User::factory()->create([
             'role' => 'client'
         ]);

@@ -41,7 +41,7 @@ class ClientController extends Controller
         if(is_null($transfer_money->userBalance($form_data))){
             return response()->json([
                 "message" => "User Account Balance Too Low Or you dont have the selected account type"
-            ]);
+            ], 400);
         }
 
         //process the transfer and check if client is sending to the same account number
@@ -49,8 +49,8 @@ class ClientController extends Controller
         if($data === "same account") {
             return response()->json([
                 "success" => false,
-                "message" => "You can't send to the same account number",
-            ]);
+                "message" => "You can't transfer to the same account number",
+            ], 400);
         }
         
         return response()->json([

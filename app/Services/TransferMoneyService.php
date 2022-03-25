@@ -32,7 +32,7 @@ class TransferMoneyService {
         // getting receiver data 
         $receiver_data = UserAccount::where('account_no', $form_data['destination_act_no'])->first();
         
-        //check if user is sending to the same account no
+        // check if user is sending to the same account no
         if($sender_data['account_no'] === $receiver_data['account_no'])
             return 'same account';
 
@@ -78,16 +78,16 @@ class TransferMoneyService {
         $user = auth()->user();
         $account_type_id = AccountType::getAccountTypeID($form_data['account_type']);
         return $user->userAccounts()->where('account_type_id', $account_type_id)
-                ->where('balance', '>=', $form_data['amount'])
+                ->where('balance', '>', $form_data['amount'])
                 ->first();
     }
 
-    // public function checkIfClientIsSendingToTheSameActNo($sender_data, $form_data)
-    // {
-    //     $receiver_data = UserAccount::where('account_no', $form_data['destination_act_no'])->first();
-    //     if($sender_data['account_no'] === $receiver_data['account_no'])
-    //         return 'same account';
-    // }
+    public function checkIfClientIsSendingToTheSameActNo($sender_data, $form_data)
+    {
+        $receiver_data = UserAccount::where('account_no', $form_data['destination_act_no'])->first();
+        if($sender_data['account_no'] === $receiver_data['account_no'])
+            return 'same account';
+    }
 
     public function updateReceiverBalance($receiver_data, $add_transfer_money, $form_data)
     {
