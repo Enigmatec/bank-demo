@@ -15,16 +15,16 @@ class ClientController extends Controller
     {
         $this->generate_act_no = $generate_act_no;
     }
-    
+
     public function addNewAccountTypeForUser(Request $request, User $user)
-    {   
+    {
         $user_account = $request->validate([
             'amount' => ['required', 'numeric'],
             'account_type' => ['required', 'exists:account_types,name'],
         ]);
         $account_type_id = AccountType::getAccountTypeID($user_account['account_type']);
 
-        if($user->userAccounts()->where('account_type_id', $account_type_id)->exists()) 
+        if($user->userAccounts()->where('account_type_id', $account_type_id)->exists())
             return response()->json(["success" => false, "message" => "Customer has this account type"]);
 
         $add_new_act_type =  $user->userAccounts()->create([
@@ -33,6 +33,6 @@ class ClientController extends Controller
             'balance' => $user_account['amount']
         ]);
 
-        return response()->json(["success" => true, "message" => "New Account Type Added"], 201);
+        return response()->json(["success" => true, "message" => "New Account Type Added For User"], 201);
     }
 }

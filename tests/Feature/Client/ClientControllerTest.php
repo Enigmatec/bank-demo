@@ -117,7 +117,7 @@ class ClientControllerTest extends TestCase
             'amount' => 1900
         ]);
         $response->assertStatus(200);
-        
+
     }
 
     public function test_user_cannot_transfer_money_to_the_same_account_no()
@@ -150,6 +150,6 @@ class ClientControllerTest extends TestCase
         ]);
         // dd($response->getContent());
         $response->assertStatus(400);
-        
+
     }
 }

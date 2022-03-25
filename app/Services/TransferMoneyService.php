@@ -12,7 +12,7 @@ class TransferMoneyService {
     // private $account_type_id  = null;
 
     // public function __construct(
-    //     AccountType $account_type, 
+    //     AccountType $account_type,
     //     UserAccount $user_account,
     //     TransactionHistory $transaction_history
     //     )
@@ -29,30 +29,33 @@ class TransferMoneyService {
         // getting sender's data
         $sender_data = $this->userBalance($form_data);
 
-        // getting receiver data 
+        // getting receiver data
         $receiver_data = UserAccount::where('account_no', $form_data['destination_act_no'])->first();
-        
+
         // check if user is sending to the same account no
         if($sender_data['account_no'] === $receiver_data['account_no'])
             return 'same account';
 
         // deduct the transfer amount from sender's balance
-        $deduct_transfer_money  = $sender_data['balance'] - $form_data['amount']; 
+        $deduct_transfer_money  = $sender_data['balance'] - $form_data['amount'];
 
         // add the transfer amount to receiver's balance
-        $add_transfer_money  = $receiver_data['balance'] + $form_data['amount']; 
+        $add_transfer_money  = $receiver_data['balance'] + $form_data['amount'];
 
         // rollback all records to their inital data if any error occur within the transaction
-        $transfered_amount = \DB::transaction(function () use ($user, $deduct_transfer_money, $add_transfer_money, $sender_data, $receiver_data, $form_data) {
-            //Creating sender's transaction 
-            $sender_data->sender()->create([
-                'user_account_id' => $sender_data['id'],
+        $transfered_amount = \DB::transaction(function () use ($deduct_transfer_money, $add_transfer_money, $sender_data, $receiver_data, $form_data) {
+            //Creating sender's transaction
+
+            // return $sender_data;
+            $sender_data->transactionHistories()->create([
+                'sender_id'  => $sender_data['user_id'],
                 'receiver_id' => $receiver_data['user_id'],
                 'account_type_id' => $sender_data['account_type_id'],
                 'transfer_amount' => $form_data['amount']
             ]);
 
-            //Creating receiver's transaction 
+
+            //Creating receiver's transaction
             TransactionHistory::create([
                 'user_account_id' => $receiver_data['id'],
                 'receiver_id' =>  $receiver_data['user_id'],
@@ -60,16 +63,16 @@ class TransferMoneyService {
                 'account_type_id' => $receiver_data['account_type_id'],
                 'received_amount' => $form_data['amount']
             ]);
-            
+
             // Update sender's Account
             $this->updateSenderBalance($sender_data, $deduct_transfer_money);
-            
+
             //update receiver's account
             $this->updateReceiverBalance($receiver_data, $add_transfer_money, $form_data);
-           
+
             return $form_data['amount'];
         });
-        
+
         return $transfered_amount;
     }
 
