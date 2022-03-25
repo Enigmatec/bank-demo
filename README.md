@@ -33,6 +33,11 @@ cp .env.example .env
 
 Then edit `.env` file with appropriate credential for your database server. Just edit these two parameter(`DB_USERNAME`, `DB_PASSWORD`).
 
+Then generate a key using this command
+```
+php artisan key:generate
+```
+
 Then create a database named `bank-demo` and then do a database migration using this command-
 ```
 php artisan migrate
