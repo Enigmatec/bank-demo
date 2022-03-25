@@ -3,7 +3,7 @@ An Internal API for a fake financial Institution
 
 ## What's this repo about
 
-An API that perform basic bank operations and can be consuemd by multiple frontends(Web, iOS, Android etc)
+An API(Sanctum) that perform basic bank operations and can be consumed by multiple frontends(Web, iOS, Android etc) 
 
 # Laravel Bank Demo
 
