@@ -43,6 +43,11 @@ Then create a database named `bank-demo` and then do a database migration using 
 php artisan migrate
 ```
 
+To generate admin data, run this command
+```
+php artisan db:seed
+```
+
 ## Run server
 
 Run server using this command-
