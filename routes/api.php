@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\RegisterController;
+use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Resources\TransactionHistoryResource;
 
 
@@ -33,7 +34,7 @@ Route::middleware(['auth:sanctum'])->group(function(){
         Route::post('account-types', [App\Http\Controllers\Admin\AccountTypeController::class, 'createAccountType'])->name('create.accountType');
         Route::post('users/add-account-type/{user}', [App\Http\Controllers\Admin\ClientController::class, 'addNewAccountTypeForUser'])->name('addActTypeForUser');
     });
-    
+
     // Client
     Route::group(['prefix' => 'user', 'middleware' => ['role:client'], 'as' => 'users.'], function(){
         Route::get('/balance', [App\Http\Controllers\Client\ClientController::class, 'retrieveActBalance'])->name('retrieve.balance');
@@ -41,4 +42,7 @@ Route::middleware(['auth:sanctum'])->group(function(){
         Route::get('/histories', [App\Http\Controllers\Client\ClientController::class, 'checkTransactionHistories'])->name('transaction.histories');
 
     });
+
+    Route::post('auth/sign-out', LogoutController::class)->name('auth.logout');
+
 });
